@@ -1,64 +1,218 @@
+```python
 import os
-import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-os.makedirs("results", exist_ok=True)
+# ---------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------
 
-# Demonstration map coordinates (abstract grid, not real geographic coordinates)
+RESULTS_DIR = "results"
+os.makedirs(RESULTS_DIR, exist_ok=True)
+
+# ---------------------------------------------------------
+# Hospital Data
+# ---------------------------------------------------------
+
 hospitals = pd.DataFrame({
     "hospital": ["Hospital A", "Hospital B", "Hospital C"],
-    "x": [8, 2, 9],
-    "y": [8, 9, 2]
+    "x": [8.0, 2.0, 9.0],
+    "y": [8.0, 9.0, 2.0]
 })
+
+# ---------------------------------------------------------
+# Emergency Scenario
+# ---------------------------------------------------------
 
 accident = np.array([4.0, 3.0])
 emergency_vehicle = np.array([3.0, 3.5])
 
-# Select nearest hospital to the emergency location
+# ---------------------------------------------------------
+# Find Nearest Hospital
+# ---------------------------------------------------------
+
 hospitals["distance"] = np.sqrt(
-    (hospitals["x"] - accident[0]) ** 2 +
-    (hospitals["y"] - accident[1]) ** 2
+    (hospitals["x"] - accident[0]) ** 2
+    + (hospitals["y"] - accident[1]) ** 2
 )
 
 nearest = hospitals.loc[hospitals["distance"].idxmin()]
 
-# Create a simple corridor of intersections between vehicle and hospital
-hospital_point = np.array([nearest["x"], nearest["y"]])
+hospital_point = np.array([
+    nearest["x"],
+    nearest["y"]
+])
+
+# ---------------------------------------------------------
+# Generate Priority Corridor
+# ---------------------------------------------------------
+
 steps = 5
 
 corridor = np.column_stack([
-    np.linspace(emergency_vehicle[0], hospital_point[0], steps),
-    np.linspace(emergency_vehicle[1], hospital_point[1], steps)
+    np.linspace(
+        emergency_vehicle[0],
+        hospital_point[0],
+        steps
+    ),
+    np.linspace(
+        emergency_vehicle[1],
+        hospital_point[1],
+        steps
+    )
 ])
 
+# ---------------------------------------------------------
+# Dynamic Signal Priority
+# ---------------------------------------------------------
+
+# Longer green time for intersections closer
+# to the emergency vehicle.
+
+max_green = 90
+min_green = 45
+
+signal_distances = np.sqrt(
+    (corridor[:, 0] - emergency_vehicle[0]) ** 2
+    + (corridor[:, 1] - emergency_vehicle[1]) ** 2
+)
+
+max_distance = signal_distances.max()
+
+if max_distance > 0:
+    normalized_distance = signal_distances / max_distance
+else:
+    normalized_distance = np.zeros_like(signal_distances)
+
+green_times = (
+    max_green
+    - normalized_distance * (max_green - min_green)
+).round().astype(int)
+
 signals = pd.DataFrame({
-    "intersection": [f"Signal {i+1}" for i in range(steps)],
+    "intersection": [
+        f"Signal {i + 1}"
+        for i in range(steps)
+    ],
     "priority": ["EMERGENCY PRIORITY"] * steps,
-    "green_time_seconds": [90, 80, 70, 60, 50]
+    "distance_from_vehicle": signal_distances.round(2),
+    "green_time_seconds": green_times
 })
 
-print("Nearest hospital:", nearest["hospital"])
-print(f"Distance: {nearest['distance']:.2f} grid units")
-print("\nPriority corridor:")
-print(signals.to_string(index=False))
+# ---------------------------------------------------------
+# Display Results
+# ---------------------------------------------------------
 
+print("=" * 55)
+print("EMERGENCY-AWARE SMART TRAFFIC SYSTEM")
+print("=" * 55)
+
+print(
+    f"\nNearest Hospital: {nearest['hospital']}"
+)
+
+print(
+    f"Distance to Hospital: "
+    f"{nearest['distance']:.2f} grid units"
+)
+
+print("\nPriority Corridor:")
+print(
+    signals.to_string(index=False)
+)
+
+# ---------------------------------------------------------
+# Save Results
+# ---------------------------------------------------------
+
+signals.to_csv(
+    os.path.join(
+        RESULTS_DIR,
+        "signal_priority.csv"
+    ),
+    index=False
+)
+
+# ---------------------------------------------------------
 # Visualization
+# ---------------------------------------------------------
+
 plt.figure(figsize=(8, 6))
-plt.scatter(hospitals["x"], hospitals["y"], s=100, label="Hospitals")
-plt.scatter(*accident, marker="X", s=140, label="Emergency Location")
-plt.scatter(*emergency_vehicle, marker="o", s=100, label="Emergency Vehicle")
-plt.plot(corridor[:, 0], corridor[:, 1], linewidth=2, label="Priority Corridor")
 
+# Hospitals
+plt.scatter(
+    hospitals["x"],
+    hospitals["y"],
+    s=100,
+    label="Hospitals"
+)
+
+# Accident location
+plt.scatter(
+    accident[0],
+    accident[1],
+    marker="X",
+    s=140,
+    label="Emergency Location"
+)
+
+# Emergency vehicle
+plt.scatter(
+    emergency_vehicle[0],
+    emergency_vehicle[1],
+    marker="o",
+    s=100,
+    label="Emergency Vehicle"
+)
+
+# Priority corridor
+plt.plot(
+    corridor[:, 0],
+    corridor[:, 1],
+    linewidth=2,
+    label="Priority Corridor"
+)
+
+# Signal locations
 for i, point in enumerate(corridor):
-    plt.scatter(point[0], point[1], marker="s", s=70)
-    plt.text(point[0] + 0.1, point[1] + 0.1, f"S{i+1}")
 
-plt.xlabel("X Coordinate (simulation)")
-plt.ylabel("Y Coordinate (simulation)")
-plt.title("Emergency-Aware Signal Priority Simulation")
+    plt.scatter(
+        point[0],
+        point[1],
+        marker="s",
+        s=70
+    )
+
+    plt.text(
+        point[0] + 0.1,
+        point[1] + 0.1,
+        f"S{i + 1}"
+    )
+
+plt.xlabel("X Coordinate (Simulation)")
+plt.ylabel("Y Coordinate (Simulation)")
+
+plt.title(
+    "Emergency-Aware Signal Priority Simulation"
+)
+
 plt.legend()
 plt.tight_layout()
-plt.savefig("results/signal_priority.png", dpi=200)
+
+plt.savefig(
+    os.path.join(
+        RESULTS_DIR,
+        "signal_priority.png"
+    ),
+    dpi=200
+)
+
 plt.close()
+
+print(
+    f"\nResults saved to '{RESULTS_DIR}/'"
+)
+
+print("\nSimulation completed successfully.")
+```
