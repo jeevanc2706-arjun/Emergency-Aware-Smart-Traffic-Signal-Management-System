@@ -1,0 +1,6 @@
+intersection,priority,distance_from_vehicle,green_time_seconds
+Signal 1,EMERGENCY PRIORITY,0.00,90
+Signal 2,EMERGENCY PRIORITY,1.87,75
+Signal 3,EMERGENCY PRIORITY,3.74,60
+Signal 4,EMERGENCY PRIORITY,5.61,52
+Signal 5,EMERGENCY PRIORITY,7.48,45
