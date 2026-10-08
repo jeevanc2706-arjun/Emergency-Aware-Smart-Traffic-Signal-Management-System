@@ -1,79 +1,87 @@
 # 🚦 Emergency-Aware Smart Traffic Signal Management System
 
-An AI-powered traffic management system designed to detect emergency vehicles and dynamically prioritize traffic signals to create a clear route toward the nearest hospital.
+A Python-based simulation of an intelligent traffic management system that identifies the nearest hospital, generates an emergency priority corridor, and dynamically calculates traffic-signal green times for an emergency vehicle.
 
 ## 🎯 Problem Statement
 
-Emergency vehicles such as ambulances and fire trucks can lose critical time because of traffic congestion and conventional fixed-time traffic signals.
+Emergency vehicles such as ambulances can lose valuable time because of traffic congestion and fixed traffic-signal timings.
 
-This project aims to use **computer vision and intelligent traffic signal management** to identify emergency vehicles and provide them with priority at intersections.
+This project demonstrates how an intelligent traffic management system can prioritize an emergency vehicle's route toward the nearest hospital.
 
-## 💡 Proposed Solution
+## 💡 Solution
 
-The system detects and tracks emergency vehicles, determines their movement through the traffic network, and dynamically prioritizes signals along the required route.
+The system simulates an emergency scenario and performs the following steps:
 
-### System Workflow
+1. Defines the emergency location and emergency vehicle position.
+2. Calculates the distance between the emergency location and available hospitals.
+3. Identifies the nearest hospital.
+4. Generates a priority corridor from the emergency vehicle toward the selected hospital.
+5. Calculates the distance of each intersection from the emergency vehicle.
+6. Dynamically assigns green-light durations based on intersection distance.
+7. Generates a visualization of the emergency priority corridor.
+8. Saves the signal-priority data as a CSV file.
+
+## 🧠 System Architecture
 
 ```text
-Traffic Camera
-      ↓
-Vehicle Detection
-      ↓
-Emergency Vehicle Identification
-      ↓
-Real-Time Tracking
-      ↓
-Route / Intersection Analysis
-      ↓
-Dynamic Signal Prioritization
-      ↓
-Priority Corridor
-      ↓
-Nearest Hospital
+Emergency Scenario
+       │
+       ▼
+Emergency Location
+       │
+       ▼
+Hospital Distance Calculation
+       │
+       ▼
+Nearest Hospital Selection
+       │
+       ▼
+Priority Corridor Generation
+       │
+       ▼
+Intersection Distance Calculation
+       │
+       ▼
+Dynamic Green-Time Allocation
+       │
+       ├───────────────┐
+       ▼               ▼
+   CSV Results      Visualization
 ```
 
 ## 🚀 Key Features
 
-- Emergency vehicle detection
-- Real-time vehicle tracking
-- Dynamic traffic signal prioritization
-- Emergency priority corridor generation
-- Accident-location based routing
-- Nearest hospital coordination
-- Automated traffic management logic
+- Nearest-hospital selection using Euclidean distance
+- Emergency vehicle location simulation
+- Priority corridor generation
+- Dynamic traffic signal green-time calculation
+- Intersection distance analysis
+- CSV result generation
+- Traffic-system visualization
+- Reproducible Python implementation
 
 ## 🛠️ Technologies
 
-- Python
-- OpenCV
-- YOLO
-- Computer Vision
-- Machine Learning
-- Traffic Signal Simulation
+- **Python**
+- **NumPy**
+- **Pandas**
+- **Matplotlib**
+- **Jupyter Notebook**
 
 ## 📁 Project Structure
 
 ```text
 emergency-aware-smart-traffic/
 │
-├── src/
-│   ├── detection.py
-│   ├── tracking.py
-│   ├── traffic_signal.py
-│   └── main.py
-│
-├── models/
-│   └── README.md
-│
-├── data/
-│   └── README.md
-│
-├── tests/
-│   └── test_system.py
-│
-├── requirements.txt
 ├── .gitignore
-└── README.md
+├── README.md
+├── requirements.txt
+├── traffic_management.py
+├── traffic_analysis.ipynb
+│
+└── results/
+    ├── signal_priority.csv
+    └── signal_priority.png
 ```
 
 ## ⚙️ Installation
@@ -82,67 +90,94 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/jeevanc2706-arjun/emergency-aware-smart-traffic.git
+```
+
+Move into the project directory:
+
+```bash
 cd emergency-aware-smart-traffic
 ```
 
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate it on Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-Install dependencies:
+Install the required dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## ▶️ Running the Project
+## ▶️ Run the Simulation
 
 ```bash
-python src/main.py
+python traffic_management.py
 ```
 
-Follow the project configuration instructions to provide the required input video, model and traffic configuration.
+The program generates:
 
-## 📊 Results
+```text
+results/signal_priority.csv
+results/signal_priority.png
+```
 
-For example:
+## 📊 Output
 
-- Emergency vehicle detection accuracy: not measured
-- Vehicle tracking performance: demonstraded through vedio based tracking
-- Signal response time: not quantitatively measured
+The system produces a table containing:
 
-## 📸 Demo
+- Intersection ID
+- Emergency priority status
+- Distance from emergency vehicle
+- Calculated green-light duration
 
-core functionalities:
+Example workflow:
 
-* Vehicle Detection — Detects vehicles from the video feed.
-* Emergency Vehicle Identification — Identifies and highlights emergency vehicles.
-* Vehicle Tracking — Maintains vehicle tracking across video frames.
-* Signal Prioritization — Prioritizes the traffic signal for an approaching emergency vehicle.
-  <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/d3d412b8-9bd9-4efc-a253-32c1b452f658" />
+```text
+Emergency Vehicle
+        ↓
+Nearest Hospital
+        ↓
+Priority Corridor
+        ↓
+Signal 1 → Signal 2 → Signal 3 → Signal 4 → Signal 5
+        ↓
+Dynamic Green-Time Allocation
+```
+
+## 📈 Visualization
+
+The simulation generates a map showing:
+
+- 🏥 Hospital locations
+- 🚑 Emergency vehicle
+- ❌ Emergency/accident location
+- 🚦 Priority intersections
+- ➡️ Emergency priority corridor
+
+<img width="768" height="512" alt="image" src="https://github.com/user-attachments/assets/45297308-cfb3-453c-828a-0e671525bf61" />
 
 
-Note: Quantitative performance metrics were not recorded in the original project, so no estimated or fabricated accuracy, tracking, or response-time values are reported
+## 🔬 Current Implementation
+
+This version is a **simulation-based prototype** using abstract X/Y coordinates rather than real geographic coordinates.
+
+The current implementation focuses on demonstrating the traffic-prioritization algorithm and emergency-route logic.
 
 ## 🔮 Future Improvements
 
+The system can be extended with:
+
+- Real-time emergency vehicle detection using computer vision
+- YOLO-based vehicle detection
 - GPS-based emergency vehicle tracking
-- Integration with real traffic controllers
+- Real road-network data
+- OpenStreetMap integration
+- Real-time traffic-density analysis
 - Multi-intersection optimization
+- ETA prediction
+- IoT-enabled traffic signal control
 - Cloud-based traffic monitoring
-- Edge deployment
-- Emergency vehicle ETA prediction
 
 ## 👨‍💻 Author
 
 **Jeevan C**
 
 BE Artificial Intelligence & Machine Learning
+
+GitHub: [jeevanc2706-arjun](https://github.com/jeevanc2706-arjun)
