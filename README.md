@@ -149,6 +149,8 @@ The simulation generates a map showing:
 - ❌ Emergency/accident location
 - 🚦 Priority intersections
 - ➡️ Emergency priority corridor
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/676ed225-eded-4bbb-a20a-3f6664573986" />
+
 
 <img width="768" height="512" alt="image" src="https://github.com/user-attachments/assets/45297308-cfb3-453c-828a-0e671525bf61" />
 
